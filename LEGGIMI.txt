@@ -5,7 +5,7 @@ Sito statico (solo HTML, CSS e JavaScript, nessun programma da installare).
 Sito di Rain Ink Tattoo, lo studio del tatuatore Matteo Quattrini
 (Facebook: https://www.facebook.com/raininktattoo.matteoquattrini).
 Logo, testi e disegni sono stati creati da zero; nato col nome provvisorio INKUBO
-(per questo cartella e repository si chiamano ancora «inkubo»).
+(dal 22/11/2026 cartella e repository si chiamano «rainInk»).
 
 
 COME APRIRLO
@@ -828,3 +828,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    dal riquadro). Dopo l'arrivo, muovendo la mappa a mano, il nome compare solo se si
                    guarda dentro quell'area (js/mappa.js, css/style.css; mappa.js?v=14,
                    style.css?v=85 in tutte le pagine).
+
+6.27 (22/11/2026)  Repository rinominato da «inkubo» a «rainInk», come la cartella: il sito ora è
+                   online su https://nemesimark.github.io/rainInk/ (il vecchio /inkubo/ non
+                   risponde più). Area riservata e Worker puntano a nemesiMark/rainInk.

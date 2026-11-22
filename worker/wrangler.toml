@@ -8,7 +8,7 @@ workers_dev = true
 keep_vars = false
 
 [vars]
-REPO = "nemesiMark/inkubo"
+REPO = "nemesiMark/rainInk"
 BRANCH = "main"
 ORIGINS = "https://nemesimark.github.io"
 

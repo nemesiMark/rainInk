@@ -17,9 +17,9 @@
  * Impostazioni del Worker (Cloudflare → Workers → questo Worker → Settings → Variables):
  *   Secret  ADMIN_PASSWORD   password dell'area riservata (scelta col cliente)
  *   Secret  SESSION_SECRET   stringa casuale lunga, serve a firmare l'accesso
- *   Secret  GITHUB_TOKEN     token "fine-grained" solo per il repository inkubo,
+ *   Secret  GITHUB_TOKEN     token "fine-grained" solo per il repository rainInk,
  *                            permesso Contents: Read and write (vale anche per le release)
- *   Text    REPO             nemesiMark/inkubo
+ *   Text    REPO             nemesiMark/rainInk
  *   Text    BRANCH           main
  *   Text    ORIGINS          https://nemesimark.github.io  (più indirizzi separati da virgola)
  * Per il cambio password dall'area riservata (Settings → Bindings → KV namespace):

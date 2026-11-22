@@ -1,9 +1,9 @@
-# Rain Ink Tattoo (cartella e repository «inkubo»)
+# Rain Ink Tattoo (cartella e repository «rainInk», prima «inkubo»)
 
 Sito statico (HTML, CSS, JavaScript) dello studio di Matteo Quattrini a Montelupone.
 Dettagli completi in **LEGGIMI.txt**: leggilo prima di modifiche non banali.
 
-- Online: https://nemesimark.github.io/inkubo/ (GitHub Pages, repo github.com/nemesiMark/inkubo, ramo `main`).
+- Online: https://nemesimark.github.io/rainInk/ (GitHub Pages, repo github.com/nemesiMark/rainInk, ramo `main`).
 - Prova in locale: `python3 -m http.server 8000` → http://localhost:8000/
 - Video: non sono nel repository, stanno nella release «video» (`gh release download video -D video`).
 
