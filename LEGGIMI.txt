@@ -843,3 +843,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    misura giusta la scelta non compare. Il ritaglio prima del salvataggio ora è sincrono
                    (toDataURL), come in Olimp: con toBlob Chrome a volte si bloccava. Avvisi gialli e
                    guida «Foto: formati e misure» aggiornati. Worker non toccato.
+
+6.29 (23/11/2026)  Guida dell'area riservata: rifatte le schermate nuova, rinomina, elimina e
+                   fissa-scheda (ora con «Misura giusta: …»); in «nuova» si vede la scelta «Adatta in
+                   automatico / Usa la mia foto così com'è» con il suo anello. Punti che lampeggiano
+                   ricalcolati con riquadri.py. Nei passi «Aggiungere una foto» e «Foto fisse» due
+                   righe sulla scelta della misura.
