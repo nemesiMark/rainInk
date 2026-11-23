@@ -832,3 +832,14 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
 6.27 (22/11/2026)  Repository rinominato da «inkubo» a «rainInk», come la cartella: il sito ora è
                    online su https://nemesimark.github.io/rainInk/ (il vecchio /inkubo/ non
                    risponde più). Area riservata e Worker puntano a nemesiMark/rainInk.
+
+6.28 (23/11/2026)  Area riservata, misura della foto (come Olimp 3.39): quando si carica una foto nuova
+                   di misura diversa da quella del posto, sotto la misura si sceglie «Adatta in
+                   automatico» (già scelto: ritaglio alla forma del posto con la parte scelta
+                   nell'anteprima e misura esatta, es. 1600 × 1000, anche ingrandendo) oppure «Usa la
+                   mia foto così com'è» (stessi pixel, niente tagli né ridimensionamenti; si toglie solo
+                   l'EXIF; oltre i 4 MB del Worker si abbassa la qualità JPEG e se non basta un
+                   messaggio chiede di adattarla). Per i video non cambia niente. Se la foto è già della
+                   misura giusta la scelta non compare. Il ritaglio prima del salvataggio ora è sincrono
+                   (toDataURL), come in Olimp: con toBlob Chrome a volte si bloccava. Avvisi gialli e
+                   guida «Foto: formati e misure» aggiornati. Worker non toccato.

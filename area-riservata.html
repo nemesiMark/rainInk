@@ -253,6 +253,14 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 .requisiti .nota-forma{display:block;color:var(--mute)}
 .avviso-foto{margin:-6px 0 12px;padding:8px 12px;border-left:4px solid #c98a00;background:#fff7e0;font-size:13px;line-height:1.45;color:#5a4300}
 .avviso-foto[hidden]{display:none}
+/* misura della foto: adattata in automatico o così com'è */
+.modo-foto{margin:-6px 0 14px;display:grid;gap:6px;font-size:13px;line-height:1.45;color:var(--ink)}
+.modo-foto[hidden]{display:none}
+.modo-foto .modo-t{font-weight:600}
+.modo-foto label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line,#ddd);border-radius:3px;background:#fff;cursor:pointer;font-weight:400}
+.modo-foto label:has(input:checked){border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.modo-foto input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--acc)}
+.modo-foto b{font-weight:600}
 @media (max-width:420px){.top .t{display:none}}
 .ordine{display:flex;align-items:center;gap:8px;margin:-4px 0 18px;font-size:14px;color:var(--mute)}
 .ordine .btn{min-height:36px;padding:0 12px;font-size:14px}
@@ -497,6 +505,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     <p class="avanza" id="avanza" aria-live="polite"></p>
     <p class="avviso-foto" id="avv-scheda" role="status" hidden></p>
     <div class="requisiti" id="req-scheda"></div>
+    <div class="modo-foto" id="modo-scheda" role="radiogroup" aria-label="Misura della foto" hidden></div>
     <div class="campo">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" maxlength="80" required placeholder="Es. Falena notturna">
@@ -523,6 +532,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     <div class="anteprima"><img id="img-ant" alt="" crossorigin="anonymous"><button class="btn cambia" type="button" id="img-cambia">Cambia foto</button></div>
     <p class="avviso-foto" id="avv-img" role="status" hidden></p>
     <div class="requisiti" id="req-img"></div>
+    <div class="modo-foto" id="modo-img" role="radiogroup" aria-label="Misura della foto" hidden></div>
     <div class="campo" id="img-alt-campo">
       <label for="img-alt">Cosa si vede nella foto <span class="facoltativo">(serve a Google e a chi non vede)</span></label>
       <input type="text" id="img-alt" maxlength="160" placeholder="Es. Matteo al lavoro nello studio">
@@ -653,8 +663,8 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <p class="g-intro">Ogni volta che aggiungi o cambi una foto, nella finestra trovi la forma e la misura esatte per quel posto, e l'anteprima ha già la forma che avrà sul sito. Se la foto è piccola o ha una forma diversa compare un avviso giallo: puoi salvarla lo stesso. L'anteprima mostra la foto esattamente come sul sito: quella grande è il computer, sotto (più piccola) il telefono; vale anche per i video. Trascinando e ingrandendo la foto scegli la parte che si vede: sul sito andrà tagliata esattamente così.</p>
       <ul class="g-elenco">
         <li><b>Formato:</b> JPG/JPEG o PNG. Altri formati (per esempio HEIC dell'iPhone, WebP, GIF) non si caricano: salvali prima come JPG/JPEG.</li>
-        <li><b>Peso massimo:</b> 30 MB per foto. Una foto più grande della misura (con la stessa forma) va bene: l'area riservata la riduce da sola a 1600 pixel sul lato lungo e toglie i dati nascosti (anche la posizione GPS).</li>
-        <li><b>Misura:</b> quella esatta del posto, scritta nella finestra e nella tabella qui sotto. Se la foto ha un'altra forma o è più piccola compare un avviso giallo; sotto i 500 pixel non si carica.</li>
+        <li><b>Peso massimo:</b> 30 MB per foto. L'area riservata toglie sempre i dati nascosti (anche la posizione GPS).</li>
+        <li><b>Misura:</b> quella esatta del posto, scritta nella finestra e nella tabella qui sotto. Se la foto ha un'altra misura, nella finestra scegli come salvarla: <b>Adatta in automatico</b> (già scelto) la ritaglia alla forma del posto, con la parte che scegli nell'anteprima, e la porta esattamente alla misura giusta, rimpicciolendola o ingrandendola; <b>Usa la mia foto così com'è</b> la salva con i suoi pixel, senza tagli né ridimensionamenti, per le foto che hai già preparato da te. Se la foto ha un'altra forma, è più piccola o molto più grande compare un avviso giallo; sotto i 500 pixel non si carica.</li>
         <li><b>Spazio:</b> in cima a ogni pagina dell'area riservata il riquadro <b>Spazio per le foto</b> mostra quanto è pieno lo spazio del sito (1 GB in tutto) e per quante foto c'è ancora posto. Si aggiorna dopo ogni salvataggio. I video stanno in uno spazio a parte e non contano. Quando la barra diventa gialla (80%) o rossa (95%) avvisa chi cura il sito.</li>
       </ul>
       <table class="g-tab">
@@ -1332,15 +1342,41 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   }
   function sagoma(r) { var w = r >= 1 ? 26 : Math.round(26 * r), h = r >= 1 ? Math.round(26 / r) : 26; return '<span class="sagoma" aria-hidden="true"><i style="width:' + w + 'px;height:' + h + 'px"></i></span>'; }
   function mostraRequisiti(box, anteprima, f) {
-    box.innerHTML = sagoma(f.r) + '<span><b>Prepara la foto a ' + f.w + ' × ' + f.h + ' pixel</b> (' + f.nome + '), in formato JPG/JPEG o PNG, fino a ' + MAX_MB + ' MB.' +
+    box.innerHTML = sagoma(f.r) + '<span><b>Misura giusta: ' + f.w + ' × ' + f.h + ' pixel</b> (' + f.nome + '), in formato JPG/JPEG o PNG, fino a ' + MAX_MB + ' MB. Se la tua foto ha un\'altra misura puoi farla adattare in automatico.' +
       (f.nota ? '<span class="nota-forma">' + f.nota + '</span>' : '') + '</span>';
     anteprima.style.setProperty('--r', String(f.r)); // forma di riserva finché non si legge quella vera del sito
+    anteprima._forma = f; // serve per portare la foto alla misura giusta
+  }
+  /* due modi per la misura della foto nuova:
+     «auto» (scelto all'inizio): ritagliata alla forma del posto (la parte la sceglie chi carica, trascinandola)
+     e portata esattamente alla misura giusta, anche ingrandendola;
+     «esatta»: resta com'è, stessi pixel, niente tagli (chi la carica l'ha già preparata da sé). */
+  function sceltaMisura(el, box, p) {
+    var f = box._forma;
+    box._foto = p || null; box._modo = 'auto'; box._fatto = false;
+    if (!p || !f) { el.hidden = true; el.innerHTML = ''; return; }
+    el.innerHTML = '<p class="modo-t">Misura della foto</p>' +
+      '<label><input type="radio" name="' + el.id + '" value="auto" checked><span><b>Adatta in automatico</b> (consigliato): diventa ' + f.w + ' × ' + f.h + ' pixel; la parte che si vede la scegli nell\'anteprima.</span></label>' +
+      '<label><input type="radio" name="' + el.id + '" value="esatta"><span><b>Usa la mia foto così com\'è</b>: resta ' + p.w + ' × ' + p.h + ' pixel, senza tagli né ridimensionamenti.</span></label>';
+    el.hidden = p.w === f.w && p.h === f.h; // già della misura giusta: non c'è niente da scegliere
+    el.onchange = function (ev) {
+      box._modo = ev.target.value; box._fatto = false;
+      if (box._modo === 'esatta') spegniInquadra(box); else inquadra(box, p); // così com'è: l'anteprima la mostra intera, con il taglio del sito
+      if (box._avv) avvisoFoto(box._avv, p, f, box._modo);
+    };
+  }
+  function misuraGiusta(box, sw, sh) { // modo automatico: la misura del posto (se la forma è un'altra, ci sta dentro)
+    var f = box._forma; if (!f) return null;
+    var r = sw / sh;
+    if (Math.max(r / f.r, f.r / r) <= 1.03) return { w: f.w, h: f.h };
+    return r > f.r ? { w: f.w, h: Math.max(1, Math.round(f.w / r)) } : { w: Math.max(1, Math.round(f.h * r)), h: f.h };
   }
   // nei blocchi Video: si sceglie un video, la copertina si fa da sola
   function requisitiVideo(box, anteprima) {
     box.innerHTML = sagoma(9 / 16) + '<span><b>Scegli un video verticale</b> (come si registra col telefono), MP4 o MOV, al massimo ' + (MAX_DURATA / 60) + ' minuti.' +
       '<span class="nota-forma">Viene preparato qui nella pagina: più leggero, senza audio; la copertina è il fotogramma al primo secondo.</span></span>';
     anteprima.style.setProperty('--r', String(9 / 16));
+    anteprima._forma = null; // i video non hanno una misura in pixel da rispettare
   }
   function nomeForma(r) { return r > 1.15 ? 'orizzontale' : r < 0.87 ? 'verticale' : 'quadrata'; }
   // controlli prima di preparare la foto: un errore ferma, l'avviso no
@@ -1351,13 +1387,20 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     if (file.size > MAX_MB * 1024 * 1024) return 'La foto è troppo pesante (' + Math.round(file.size / 1048576) + ' MB): il massimo è ' + MAX_MB + ' MB.';
     return '';
   }
-  function avvisoFoto(el, p, f) {
+  function avvisoFoto(el, p, f, modo) {
     var testi = [], r = p.w / p.h;
-    var giusta = f.w + ' × ' + f.h + ' pixel';
-    if (Math.max(r / f.r, f.r / r) > 1.03)
-      testi.push('La foto è ' + p.w + ' × ' + p.h + ' pixel' + (nomeForma(r) !== nomeForma(f.r) ? ' (' + nomeForma(r) + ')' : '') + ', qui va ' + giusta + ': una parte verrà tagliata. Trascina la foto nell\'anteprima (e ingrandiscila se vuoi) per scegliere la parte che si vede: si salva così come la vedi.');
+    var giusta = f.w + ' × ' + f.h + ' pixel', sua = 'La foto è ' + p.w + ' × ' + p.h + ' pixel' + (nomeForma(r) !== nomeForma(f.r) ? ' (' + nomeForma(r) + ')' : '');
+    var diversa = Math.max(r / f.r, f.r / r) > 1.03;
+    if (modo === 'esatta') {
+      if (p.w === f.w && p.h === f.h) { /* misura giusta: niente da dire */ }
+      else if (diversa) testi.push(sua + ', qui va ' + giusta + ': si salva così com\'è e sul sito si vedrà con il taglio del sito, come nell\'anteprima.');
+      else if (p.w < f.w * 0.97) testi.push(sua + ', più piccola di ' + giusta + ': si salva così com\'è e sul sito potrebbe vedersi sgranata.');
+      else if (Math.max(p.w, p.h) > Math.max(f.w, f.h) * 1.5) testi.push(sua + ', più grande di ' + giusta + ': si salva così com\'è, ma occupa più spazio del necessario.');
+    }
+    else if (diversa)
+      testi.push(sua + ', qui va ' + giusta + ': una parte verrà tagliata. Trascina la foto nell\'anteprima (e ingrandiscila se vuoi) per scegliere la parte che si vede: si salva così come la vedi.');
     else if (p.w < f.w * 0.97)
-      testi.push('La foto è ' + p.w + ' × ' + p.h + ' pixel, più piccola di ' + giusta + ': sul sito potrebbe vedersi sgranata.');
+      testi.push('La foto è ' + p.w + ' × ' + p.h + ' pixel, più piccola di ' + giusta + ': verrà ingrandita a ' + giusta + ' e sul sito potrebbe vedersi sgranata.');
     el.textContent = testi.join(' '); el.hidden = !testi.length;
   }
 
@@ -1380,7 +1423,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
         c.toBlob(function (blob) {
           if (!blob) return ko(new Error('Foto non leggibile'));
           var r = new FileReader();
-          r.onload = function () { ok({ b64: String(r.result).split(',')[1], anteprima: URL.createObjectURL(blob), w: w0, h: h0, tela: t }); };
+          r.onload = function () { ok({ b64: String(r.result).split(',')[1], anteprima: URL.createObjectURL(blob), w: w0, h: h0, tela: t, img: img }); }; // img: la foto intera, per la misura giusta o «così com'è»
           r.onerror = function () { ko(new Error('Foto non leggibile')); };
           r.readAsDataURL(blob);
         }, 'image/jpeg', 0.85); // il nuovo file non contiene i dati EXIF (né la posizione GPS)
@@ -1628,14 +1671,23 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     var r = box.nextElementSibling; if (r && r.classList.contains('zoom-riga')) r.querySelector('input').value = Math.round(e.z * 100);
     clearTimeout(e.t); e.t = setTimeout(function () { piccolaAnteprima(box); }, 120);
   }
-  function parteVisibile(box, lato) { // disegna la parte visibile su una tela (lato lungo al massimo «lato»)
+  function parteVisibile(box, lato, giusta) { // disegna la parte visibile su una tela (lato lungo al massimo «lato»; con «giusta» esattamente la misura del posto)
     var e = box._ed, img = box.querySelector('img'), m = misure(box);
     var src = e.p && e.p.tela ? e.p.tela : img, tw = src.width || img.naturalWidth, th = src.height || img.naturalHeight;
     if (src === img) { tw = img.naturalWidth; th = img.naturalHeight; }
     var sx = -m.L / m.W * tw, sy = -m.T / m.H * th, sw = 100 / m.W * tw, sh = 100 / m.H * th;
+    var f = giusta && box._forma;
+    if (f) { // il riquadro del sito può avere una forma un po' diversa dalla misura giusta: si allarga la parte scelta
+      // (restando dentro la foto) fino alla forma giusta, e se non c'è spazio si stringe dall'altro lato
+      var nw = sh * f.r, nh = sw / f.r;
+      if (nw > sw && nw <= tw) { sx = Math.max(0, Math.min(tw - nw, sx - (nw - sw) / 2)); sw = nw; }
+      else if (nh > sh && nh <= th) { sy = Math.max(0, Math.min(th - nh, sy - (nh - sh) / 2)); sh = nh; }
+      else if (nw < sw) { sx += (sw - nw) / 2; sw = nw; }
+      else if (nh < sh) { sy += (sh - nh) / 2; sh = nh; }
+    }
     var k = Math.min(1, lato / Math.max(sw, sh)), c = document.createElement('canvas');
-    c.width = Math.max(1, Math.round(sw * k)); c.height = Math.max(1, Math.round(sh * k));
-    var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+    c.width = f ? f.w : Math.max(1, Math.round(sw * k)); c.height = f ? f.h : Math.max(1, Math.round(sh * k));
+    var x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
     x.drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
     return c;
   }
@@ -1652,20 +1704,37 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     var img = box.querySelector('img'), R = box.clientWidth / box.clientHeight, tr = img.naturalWidth / img.naturalHeight;
     return Math.max(R / tr, tr / R) > 1.01;
   }
-  function tagliaPrima(box, blocca, err, poi) { // prima di salvare: la foto diventa esattamente quella che si vede
-    if (!daTagliare(box)) return false;
-    var e = box._ed; blocca(true);
-    new Promise(function (ok, ko) {
-      var c; try { c = parteVisibile(box, 1600); } catch (er) { return ko(er); }
-      c.toBlob(function (blob) {
-        if (!blob) return ko(new Error('Foto non leggibile'));
-        var fr = new FileReader();
-        fr.onload = function () { ok({ b64: String(fr.result).split(',')[1], anteprima: URL.createObjectURL(blob), w: c.width, h: c.height }); };
-        fr.onerror = function () { ko(new Error('Foto non leggibile')); };
-        fr.readAsDataURL(blob);
-      }, 'image/jpeg', 0.85);
-    }).then(function (q) { e.mossa = false; e.fatta = q; blocca(false); poi(q); })
-      .catch(function () { blocca(false); err('Non riesco a leggere la foto per tagliarla: ricarica la pagina e riprova.'); });
+  var MAX_INVIO = 4 * 1024 * 1024 - 64 * 1024; // il Worker accetta foto fino a 4 MB
+  function inJpeg(c, qualita) { // la prima qualità che sta nel limite del Worker, altrimenti null
+    for (var j = 0; j < qualita.length; j++) {
+      var b64 = c.toDataURL('image/jpeg', qualita[j]).split(',')[1];
+      if (b64.length * 3 / 4 > MAX_INVIO) continue;
+      var bin = atob(b64), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+      return { b64: b64, anteprima: URL.createObjectURL(new Blob([u], { type: 'image/jpeg' })), w: c.width, h: c.height };
+    }
+    return null;
+  }
+  function telaIntera(img, w, h) { // tutta la foto su una tela w × h (le parti trasparenti delle PNG diventano bianche)
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+    x.drawImage(img, 0, 0, w, h);
+    return c;
+  }
+  // prima di salvare: in automatico la foto diventa esattamente quella che si vede, alla misura giusta del posto;
+  // «così com'è» resta con i suoi pixel (si toglie solo l'EXIF, come sempre)
+  function tagliaPrima(box, blocca, err, poi) {
+    var e = box._ed, p = box._foto, esatta = box._modo === 'esatta', taglia = !esatta && daTagliare(box), g = null, q;
+    if (!taglia) {
+      if (!p || box._fatto) return false;
+      g = esatta ? { w: p.w, h: p.h } : misuraGiusta(box, p.w, p.h);
+      if (!g || (!esatta && g.w === p.w && g.h === p.h)) return false; // già della misura giusta: va bene com'è stata preparata
+    }
+    // tutto subito (toDataURL è sincrono): con toBlob o con un timer Chrome a volte non risponde più e il salvataggio resterebbe fermo
+    try { q = inJpeg(taglia ? parteVisibile(box, 1600, true) : telaIntera(p.img, g.w, g.h), esatta ? [0.92, 0.85, 0.75] : [0.85]); }
+    catch (er) { err(taglia ? 'Non riesco a leggere la foto per tagliarla: ricarica la pagina e riprova.' : 'Non riesco a preparare la foto: ricarica la pagina e riprova.'); return true; }
+    if (!q) { err('La foto è troppo pesante per salvarla così com\'è (' + p.w + ' × ' + p.h + ' pixel): scegli «Adatta in automatico» oppure riducila prima di caricarla.'); return true; }
+    if (e) { e.mossa = false; e.fatta = q; }
+    box._fatto = true; poi(q);
     return true;
   }
   // trascinamento (un dito o il mouse), ingrandimento (due dita o rotella), tastiera
@@ -1704,6 +1773,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     });
   }
   attivaGesti($('anteprima').parentNode); attivaGesti($('img-ant').parentNode);
+  $('anteprima').parentNode._avv = $('avv-scheda'); $('img-ant').parentNode._avv = $('avv-img');
 
   function scegliFile(accetta) { $('file').accept = accetta; $('file').value = ''; $('file').click(); }
   function nuovoLavoro(sez) { schSez = sez; schX = null; scegliFile(sez.accetta); }
@@ -1734,7 +1804,8 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     pronto.then(function (p) {
       fotoScelta = p; $('avanza').textContent = p.video ? 'Video pronto (' + (p.video.blob.size / 1048576).toFixed(1).replace('.', ',') + ' MB): scrivi il titolo e tocca «' + $('conferma').textContent + '».' : '';
       mostraAnteprima(p.anteprima, p.videoUrl); $('anteprima').alt = 'Anteprima della foto';
-      if (!p.video) { avvisoFoto($('avv-scheda'), p, formaDi()); inquadra($('anteprima').parentNode, p); }
+      sceltaMisura($('modo-scheda'), $('anteprima').parentNode, p.video ? null : p);
+      if (!p.video) { avvisoFoto($('avv-scheda'), p, formaDi(), 'auto'); inquadra($('anteprima').parentNode, p); }
     })
       .catch(function (err) { $('err-scheda').textContent = err.message; $('avanza').textContent = ''; if (nuovo) fotoScelta = null; })
       .then(function () { $('conferma').disabled = false; $('cambia').disabled = false; });
@@ -1754,6 +1825,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('err-scheda').textContent = ''; $('avv-scheda').hidden = true;
     if (sez.accetta === SOLO_VIDEO) requisitiVideo($('req-scheda'), $('anteprima').parentNode);
     else mostraRequisiti($('req-scheda'), $('anteprima').parentNode, formaDi());
+    sceltaMisura($('modo-scheda'), $('anteprima').parentNode, null);
     var im = $('anteprima'); spegniInquadra(im.parentNode);
     vistaSito(im.parentNode, doveElenco(sez));
     if (x) { riserva(im, x.foto); mostraAnteprima(sorgente(x.foto), x.video ? sorgente(x.video) : null); im.alt = 'Foto attuale'; if (!x.video) inquadra(im.parentNode, null); } else { mostraAnteprima(null); im.alt = ''; }
@@ -1824,7 +1896,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('img-dove').textContent = immAperta.descrizione || ''; $('img-dove').hidden = !immAperta.descrizione;
     $('img-alt').value = immAperta.alt || ''; $('err-img').textContent = '';
     $('img-alt-campo').hidden = !!immAperta.decorativa; // foto del menu: la scritta sotto la descrive già
-    $('avv-img').hidden = true; mostraRequisiti($('req-img'), $('img-ant').parentNode, formaDi(immAperta.id));
+    $('avv-img').hidden = true; mostraRequisiti($('req-img'), $('img-ant').parentNode, formaDi(immAperta.id)); sceltaMisura($('modo-img'), $('img-ant').parentNode, null);
     var im = $('img-ant'); spegniInquadra(im.parentNode); vistaSito(im.parentNode, doveSlot(immAperta));
     riserva(im, immAperta.foto, immAperta.provvisoria); im.src = sorgente(immAperta.foto); im.alt = 'Foto attuale'; inquadra(im.parentNode, null);
     var box = $('img-testi'); box.innerHTML = '';
@@ -1845,11 +1917,12 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('err-img').textContent = ''; $('avv-img').hidden = true;
     var sbaglio = controllaFile(f); if (sbaglio) { $('err-img').textContent = sbaglio; return; } // la foto di prima resta
     $('img-ok').disabled = true; spegniInquadra($('img-ant').parentNode); $('img-ant').removeAttribute('src'); $('img-ant').alt = 'Preparazione della foto…';
-    preparaFoto(f).then(function (p) { fotoImm = p; $('img-ant').onerror = null; $('img-ant').src = p.anteprima; $('img-ant').alt = 'Anteprima della foto nuova'; avvisoFoto($('avv-img'), p, formaDi(immAperta.id)); inquadra($('img-ant').parentNode, p); if (!immAperta.decorativa) $('img-alt').focus(); })
+    preparaFoto(f).then(function (p) { fotoImm = p; $('img-ant').onerror = null; $('img-ant').src = p.anteprima; $('img-ant').alt = 'Anteprima della foto nuova'; sceltaMisura($('modo-img'), $('img-ant').parentNode, p); avvisoFoto($('avv-img'), p, formaDi(immAperta.id), 'auto'); inquadra($('img-ant').parentNode, p); if (!immAperta.decorativa) $('img-alt').focus(); })
       .catch(function (err) { // torna a vedersi la foto che c'era
         $('err-img').textContent = err.message;
         if (fotoImm) $('img-ant').src = fotoImm.anteprima; else { riserva($('img-ant'), immAperta.foto, immAperta.provvisoria); $('img-ant').src = sorgente(immAperta.foto); }
         $('img-ant').alt = fotoImm ? 'Anteprima della foto nuova' : 'Foto attuale';
+        sceltaMisura($('modo-img'), $('img-ant').parentNode, fotoImm || null); if (fotoImm) avvisoFoto($('avv-img'), fotoImm, formaDi(immAperta.id), 'auto');
         inquadra($('img-ant').parentNode, fotoImm || null);
       })
       .then(function () { $('img-ok').disabled = false; });
